@@ -27,7 +27,6 @@
 7. [Sección 4 — Reto integrador](#sección-4--reto-integrador-simulador-de-caja)
 8. [Sección 5 — Depuración de código](#sección-5--análisis-y-depuración-de-código)
 9. [Checklist de autoevaluación](#checklist-de-autoevaluación)
-10. [Diagrama](#diagrama)
 
 ---
 
@@ -102,6 +101,10 @@ Se analiza la precedencia de operadores, el operador residuo (`%`), el increment
 | `int y = ++x + x++;` | `16` | `16` (x queda en `9`) | `++x` incrementa primero (x = 8) y usa 8; `x++` usa 8 y después incrementa (x = 9). |
 | `double div1 = 15 / 2;`<br>`double div2 = 15.0 / 2;` | `7.5` y `7.5` | `7.0` y `7.5` | `15 / 2` es división **entera** (da 7) y luego se convierte a `7.0`. En `15.0 / 2` el `2` se promueve a `double`. |
 | `boolean res = flag && (++x > 0);` | `false` | `false` (x sigue en `7`) | **Cortocircuito:** como `flag` es `false`, Java no evalúa el lado derecho y `++x` nunca se ejecuta. |
+
+**Evidencia: tabla resuelta en el PDF del taller**
+
+![Tabla de evaluación de expresiones resuelta](tabla_seccion1.png)
 
 > **Aprendizaje clave:** el tipo de la variable que recibe el resultado (`double`) no cambia cómo se calcula la operación. Si ambos operandos son `int`, la división se trunca **antes** de asignarse.
 
@@ -292,9 +295,3 @@ Cuatro fragmentos con errores clásicos, cada uno en su propia clase. Se inspecc
 - [x] Switch implementado en sus dos variantes: tradicional con `break` y moderno con `->`
 - [x] Reto integrador con totales exactos: **$638.00** (Caso A) y **$275.50** (Caso B)
 - [x] Los 4 fragmentos defectuosos identificados y corregidos con el depurador
-
----
-
-## Diagrama
-
-![Diagrama del taller](DIAGRAMA.png)
