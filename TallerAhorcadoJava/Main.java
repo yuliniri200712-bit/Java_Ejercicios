@@ -4,17 +4,8 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
-/**
- * Taller Práctico Integrador: "Adivina la Palabra Secreta / Ahorcado de Consola".
- *
- * Unidad 1.1 -> Tipos de datos, constantes, acumuladores.
- * Unidad 1.2 -> Menú con switch y validación condicional.
- * Unidad 1.3 -> Bucles do-while / while / for, break y continue.
- * Unidad 1.4 -> Normalización de String y máscara dinámica con StringBuilder.
- */
 public class Main {
 
-    // ===================== Unidad 1.1: constantes =====================
     static final int MAX_INTENTOS = 6;
     static final double PUNTAJE_BASE = 100.0;
     static final double PUNTOS_ACIERTO = 10.0;
@@ -30,7 +21,6 @@ public class Main {
     static final Scanner scanner = new Scanner(System.in);
     static final Random random = new Random();
 
-    // Estadísticas acumuladas de la sesión (opción 2 del menú)
     static int partidasJugadas = 0;
     static int partidasGanadas = 0;
     static double puntajeAcumulado = 0.0;
@@ -38,10 +28,8 @@ public class Main {
     static String mejorJugador = "-";
 
     public static void main(String[] args) {
-        // Fuerza el punto decimal (83.33 y no 83,33) en printf
         Locale.setDefault(Locale.US);
 
-        // ============ Fase 1: menú principal con do-while + switch ============
         int opcion;
         do {
             mostrarMenu();
@@ -64,7 +52,6 @@ public class Main {
                     System.out.println("\n¡Gracias por jugar! Hasta pronto.");
                     break;
                 default:
-                    // No debería ocurrir: leerOpcionMenu solo devuelve 1, 2 o 3
                     System.out.println("Opción no reconocida.");
             }
         } while (opcion != 3);
@@ -82,10 +69,6 @@ public class Main {
         System.out.println("3. Salir");
     }
 
-    /**
-     * Validación repetitiva con while: lee la línea completa con nextLine()
-     * y la convierte con Integer.parseInt(), sin romper el programa.
-     */
     static int leerOpcionMenu() {
         int opcion = 0;
         boolean opcionValida = false;
@@ -109,30 +92,26 @@ public class Main {
         return opcion;
     }
 
-    // ============ Fase 2: registro del jugador (normalización de String) ============
     static String registrarJugador() {
         String nombreJugador = "";
         while (nombreJugador.length() == 0) {
             System.out.print("\nIngrese su nombre: ");
             nombreJugador = scanner.nextLine()
-                    .trim()           // 1. limpieza de espacios
-                    .toUpperCase();   // 2. estandarización
-            if (nombreJugador.length() == 0) { // 3. validación de contenido
+                    .trim()          
+                    .toUpperCase();   
+            if (nombreJugador.length() == 0) { 
                 System.out.println("[!] El nombre no puede estar vacío.");
             }
         }
         return nombreJugador;
     }
 
-    // ============ Fase 3: bucle del juego con StringBuilder ============
     static void jugar() {
         String nombreJugador = registrarJugador();
         String palabraSecreta = PALABRAS[random.nextInt(PALABRAS.length)];
 
-        // Reto 2: dificultad dinámica según la longitud de la palabra
         final int maxIntentosPartida = calcularMaxIntentos(palabraSecreta);
 
-        // Variables de estado (tabla de la Fase 2)
         int intentosRestantes = maxIntentosPartida;
         double puntaje = PUNTAJE_BASE;
         boolean juegoGanado = false;
@@ -143,7 +122,6 @@ public class Main {
         int fallos = 0;
         int turnos = 0;
 
-        // Máscara oculta: "_ _ _ _" (letra i en la posición i * 2)
         StringBuilder mascara = new StringBuilder();
         for (int i = 0; i < palabraSecreta.length(); i++) {
             mascara.append('_');
@@ -151,7 +129,6 @@ public class Main {
                 mascara.append(' ');
             }
         }
-        // Historial dinámico de letras arriesgadas
         StringBuilder historial = new StringBuilder();
 
         System.out.printf("%nBienvenido, %s. La palabra tiene %d letras y tienes %d intentos.%n",
@@ -164,7 +141,6 @@ public class Main {
             System.out.println("Usadas:   " + (historial.length() > 0 ? historial : "(ninguna)"));
             System.out.printf("Intentos: %d / %d%n", intentosRestantes, maxIntentosPartida);
 
-            // Reto 1: pista inteligente con substring() cuando queda 1 intento
             if (intentosRestantes == 1 && !pistaUsada) {
                 int posicionOculta = mascara.indexOf("_") / 2;
                 String pista = palabraSecreta.substring(posicionOculta, posicionOculta + 1);
@@ -177,19 +153,16 @@ public class Main {
             System.out.print("Letra: ");
             String entrada = scanner.nextLine().trim();
 
-            // Entrada vacía -> se salta el turno sin castigo
             if (entrada.length() == 0) {
                 System.out.println("[!] No escribiste nada.");
                 continue;
             }
 
-            // Rendición -> sale del bucle inmediatamente
             if (entrada.equalsIgnoreCase("SALIR")) {
                 seRindio = true;
                 break;
             }
 
-            // Carácter inválido -> se salta el turno
             if (entrada.length() > 1 || !Character.isLetter(entrada.charAt(0))) {
                 System.out.println("[!] Ingresa una sola letra (A-Z).");
                 continue;
@@ -198,7 +171,6 @@ public class Main {
             ultimaLetra = Character.toUpperCase(entrada.charAt(0));
             String letra = String.valueOf(ultimaLetra);
 
-            // Letra repetida -> se salta el turno sin perder intento
             if (historial.indexOf(letra) != -1) {
                 System.out.println("[!] Ya probaste la letra " + letra + ". No pierdes intento.");
                 continue;
@@ -207,7 +179,6 @@ public class Main {
             historial.append(letra).append(' ');
             turnos++;
 
-            // Comparación con charAt() + equalsIgnoreCase()
             boolean acierto = false;
             for (int i = 0; i < palabraSecreta.length(); i++) {
                 String letraPalabra = String.valueOf(palabraSecreta.charAt(i));
@@ -217,7 +188,6 @@ public class Main {
                 }
             }
 
-            // Solo se decrementa si la letra NO está en la palabra
             if (acierto) {
                 aciertos++;
                 puntaje += PUNTOS_ACIERTO;
@@ -227,17 +197,14 @@ public class Main {
                 puntaje -= PUNTOS_FALLO;
             }
 
-            // Retroalimentación con operador ternario
             System.out.println(acierto
                     ? "[OK] ¡Bien! La letra " + letra + " está en la palabra."
                     : "[X] La letra " + letra + " no está. Pierdes un intento.");
 
-            // Victoria: ya no quedan guiones ocultos
             if (mascara.indexOf("_") == -1) {
                 juegoGanado = true;
                 break;
             }
-            // Derrota: se agotaron los intentos
             if (intentosRestantes == 0) {
                 break;
             }
@@ -247,10 +214,6 @@ public class Main {
                 intentosRestantes, maxIntentosPartida, aciertos, fallos, turnos, puntaje);
     }
 
-    /**
-     * Reto 2: MAX_INTENTOS es final y no puede cambiar, así que se calcula
-     * un límite propio de la partida a partir de la constante y de length().
-     */
     static int calcularMaxIntentos(String palabra) {
         int longitud = palabra.length();
         if (longitud <= 4) {
@@ -262,10 +225,6 @@ public class Main {
         }
     }
 
-    /**
-     * Reto 3: multiplicador según velocidad (letras distintas / turnos usados)
-     * y precisión (fallos sobre el máximo permitido). Rango: 1.00x a 2.00x.
-     */
     static double calcularMultiplicador(boolean juegoGanado, String palabra,
                                         int turnos, int fallos, int maxIntentos) {
         if (!juegoGanado) {
@@ -277,18 +236,16 @@ public class Main {
                 letrasDistintas++;
             }
         }
-        double velocidad = (double) letrasDistintas / turnos;              // 1.0 = sin turnos de más
-        double precision = (double) (maxIntentos - fallos) / maxIntentos; // 1.0 = sin fallos
+        double velocidad = (double) letrasDistintas / turnos;              
+        double precision = (double) (maxIntentos - fallos) / maxIntentos; 
         return 1.0 + 0.5 * velocidad + 0.5 * precision;
     }
 
-    // ============ Fase 4: resumen formateado con printf ============
     static void mostrarResumen(String nombreJugador, String palabraSecreta,
                                boolean juegoGanado, boolean seRindio,
                                int intentosRestantes, int maxIntentos,
                                int aciertos, int fallos, int turnos, double puntaje) {
 
-        // Casting a double para evitar la división entera
         double porcentajeAciertos = turnos > 0 ? (double) aciertos / turnos * 100 : 0.0;
         double multiplicador = calcularMultiplicador(juegoGanado, palabraSecreta,
                 turnos, fallos, maxIntentos);
@@ -308,7 +265,6 @@ public class Main {
         System.out.printf("%-21s%.2f pts%n", "Puntaje Final:", puntajeFinal);
         System.out.printf("%s%n", LINEA);
 
-        // Actualización de estadísticas de la sesión
         partidasJugadas++;
         if (juegoGanado) {
             partidasGanadas++;
